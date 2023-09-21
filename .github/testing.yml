@@ -1,0 +1,25 @@
+name: testing_api
+on: [push,pull_request]
+jobs:
+  testing_api:
+    runs-on: ubuntu-lates
+    env:
+      SERVICE_ACCOUNT_KEY: ${{sectres.SERVICE_ACCOUNT_KEY}}
+    steps:
+    - name: checkout  the repo
+      uses: actions/checkout@v2
+    - name: creating and activating virtualenv
+      run: |
+        pip3 install virtualenv 
+        virtualenv venv
+        source venv/bin/activate
+    - name: installing independencies
+      run: |
+        pip3 install dvc[gs]
+        pip install -r requirements_test.txt
+    -name: test api
+      run: |
+      export GOOGLE_APPLICATION_CREDENTIALS=$(python utilities/setter.py)
+      dvc pull model/model.pkl -r model-tracker
+      pytest test.py
+      
